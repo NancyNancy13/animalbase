@@ -15,11 +15,17 @@ const Animal = {
 function start() {
   //   console.log("ready");
 
-  // TODO: Add event-listeners to filter buttons
-  document.querySelectorAll("[data-action='filter']").forEach((button) => button.addEventListener("click", chooseFilter));
+  // TODO:  event-listeners to filter buttons
+  registerButtons();
+
   loadJSON();
 }
 
+function registerButtons() {
+  document.querySelectorAll("[data-action='filter']").forEach((button) => button.addEventListener("click", chooseFilter));
+
+  document.querySelectorAll("[data-action='sort']").forEach((button) => button.addEventListener("click", chooseSort));
+}
 async function loadJSON() {
   const response = await fetch("animals.json");
   const jsonData = await response.json();
@@ -27,26 +33,9 @@ async function loadJSON() {
   // when loaded, prepare data objects
   prepareObjects(jsonData);
 }
-function chooseFilter(event) {
-  const filter = event.target.dataset.filter;
-  console.log(filter);
-  filterList(filter);
-}
-function filterList(animalType) {
-  let filterList = allAnimals;
-  if (animalType === "cat") {
-    filterList = allAnimals.filter(onlyCats);
-  } else if (animalType === "dog") {
-    filterList = allAnimals.filter(onlyDogs);
-  }
-  displayList(filterList);
-}
-function onlyCats(animal) {
-  return animal.type === "cat";
-}
-function onlyDogs(animal) {
-  return animal.type === "dog";
-}
+
+// adding sorting
+
 //  model////////////////
 
 function prepareObjects(jsonData) {
@@ -67,7 +56,63 @@ function preapareObject(jsonObject) {
 
   return animal;
 }
+function chooseFilter(event) {
+  const filter = event.target.dataset.filter;
+  console.log(filter);
+  filterList(filter);
+}
+function filterList(filterBy) {
+  let filterList = allAnimals;
+  if (filterBy === "cat") {
+    // create the filter list only for cats
+    filterList = allAnimals.filter(onlyCats);
+    // create the filter list only for dogs
+  } else if (filterBy === "dog") {
+    filterList = allAnimals.filter(onlyDogs);
+  }
+  displayList(filterList);
+}
+// only cats
+function onlyCats(animal) {
+  return animal.type === "cat";
+}
+// only dogs
+function onlyDogs(animal) {
+  return animal.type === "dog";
+}
 
+// adding sorting//////////////////////
+function chooseSort(event) {
+  const sort = event.target.dataset.sort;
+  console.log(sort);
+  sortList(sort);
+}
+function sortList(sortBy) {
+  let sortedList = allAnimals;
+  if (sortBy === "name") {
+    sortedList = sortedList.sort(sortByName);
+  } else if (sortBy === "type") {
+    sortedList = sortedList.sort(sortByType);
+  }
+
+  displayList(sortedList);
+}
+// sort by name
+function sortByName(animalA, animalB) {
+  if (animalA.name < animalB.name) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+// sort by type
+function sortByType(animalA, animalB) {
+  if (animalA.type < animalB.type) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
 function displayList(animals) {
   // clear the list
   document.querySelector("#list tbody").innerHTML = "";
