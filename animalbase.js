@@ -83,36 +83,29 @@ function onlyDogs(animal) {
 
 // adding sorting//////////////////////
 function chooseSort(event) {
-  const sort = event.target.dataset.sort;
-  console.log(sort);
-  sortList(sort);
+  const sortBy = event.target.dataset.sort;
+  console.log(sortBy);
+  sortList(sortBy);
 }
 function sortList(sortBy) {
   let sortedList = allAnimals;
-  if (sortBy === "name") {
-    sortedList = sortedList.sort(sortByName);
-  } else if (sortBy === "type") {
-    sortedList = sortedList.sort(sortByType);
-  }
+  // if (sortBy === "name") {
+  sortedList = sortedList.sort(sortByProperty);
+  // } else if (sortBy === "type") {
+  // sortedList = sortedList.sort(sortByType);
+  // }
 
+  // sort by getting all values( like by name, type, desc and age)
+  function sortByProperty(animalA, animalB) {
+    if (animalA[sortBy] < animalB[sortBy]) {
+      return -1;
+    } else {
+      return 1;
+    }
+  }
   displayList(sortedList);
 }
-// sort by name
-function sortByName(animalA, animalB) {
-  if (animalA.name < animalB.name) {
-    return -1;
-  } else {
-    return 1;
-  }
-}
-// sort by type
-function sortByType(animalA, animalB) {
-  if (animalA.type < animalB.type) {
-    return -1;
-  } else {
-    return 1;
-  }
-}
+
 function displayList(animals) {
   // clear the list
   document.querySelector("#list tbody").innerHTML = "";
