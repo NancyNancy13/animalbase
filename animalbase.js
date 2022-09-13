@@ -11,6 +11,13 @@ const Animal = {
   type: "",
   age: 0,
 };
+// global variables as an obj
+const settings = {
+  filterBy: "all",
+  sortBy: "name",
+  sortDir: "asc",
+};
+
 // cotroller/////////////////////////////////
 function start() {
   //   console.log("ready");
@@ -59,18 +66,24 @@ function preapareObject(jsonObject) {
 function chooseFilter(event) {
   const filter = event.target.dataset.filter;
   console.log(filter);
-  filterList(filter);
+  // filterList(filter);
+  setFilter(filter);
 }
-function filterList(filterBy) {
-  let filterList = allAnimals;
-  if (filterBy === "cat") {
+
+function setFilter(filter) {
+  settings.filterBy = filter;
+  buildList();
+}
+function filterList(filteredList) {
+  // let filterList = allAnimals;
+  if (settings.filterBy === "cat") {
     // create the filter list only for cats
-    filterList = allAnimals.filter(onlyCats);
+    filteredList = allAnimals.filter(onlyCats);
     // create the filter list only for dogs
-  } else if (filterBy === "dog") {
-    filterList = allAnimals.filter(onlyDogs);
+  } else if (settings.filterBy === "dog") {
+    filteredList = allAnimals.filter(onlyDogs);
   }
-  displayList(filterList);
+  return filteredList;
 }
 // only cats
 function onlyCats(animal) {
@@ -92,14 +105,20 @@ function chooseSort(event) {
   } else {
     event.target.dataset.sortDirection = "asc";
   }
-  console.log(`user select${sortBy}, ${sortDir}`);
-  sortList(sortBy, sortDir);
+  console.log(`user select ${sortBy}, ${sortDir}`);
+  setSort(sortBy, sortDir);
 }
-function sortList(sortBy, sortDir) {
-  let sortedList = allAnimals;
+
+function setSort(sortBy, sortDir) {
+  settings.sortBy = sortBy;
+  settings.sortDir = sortDir;
+  buildList();
+}
+function sortList(sortedList) {
+  // let sortedList = allAnimals;
   // if (sortBy === "name") {
   let direction = 1;
-  if (sortDir === "desc") {
+  if (settings.sortDir === "desc") {
     direction = -1;
   } else {
     direction = 1;
@@ -112,15 +131,21 @@ function sortList(sortBy, sortDir) {
   // sort by getting all values( like by name, type, desc and age)
 
   function sortByProperty(animalA, animalB) {
-    if (animalA[sortBy] < animalB[sortBy]) {
+    if (animalA[settings.sortBy] < animalB[settings.sortBy]) {
       return -1 * direction;
     } else {
       return 1 * direction;
     }
   }
-  displayList(sortedList);
+  return sortedList;
 }
 
+// adding buildlist to combine the sorting and filtering
+function buildList() {
+  const currentList = filterList(allAnimals);
+  const sortedList = sortList(currentList);
+  displayList(sortedList);
+}
 function displayList(animals) {
   // clear the list
   document.querySelector("#list tbody").innerHTML = "";
